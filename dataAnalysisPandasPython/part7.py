@@ -5,30 +5,40 @@ apiKey = 'rcYX2m1mjgcxsyx_skRb'
 
 def getStateList():
     statesHMTL = pd.read_html('resources/states.html')[0][1][1:]
-    quandlKeys = []
+    abbreviations = []
     for abbreviation in statesHMTL:
-        quandlKeys.append('FMAC/HPI_'+abbreviation)
+        abbreviations.append(abbreviation)
     
-    return quandlKeys
+    return abbreviations
         
-def writeInitialStateData():
+def writeInitialStateData(rolling=False):
     mainData = pd.DataFrame()
 
-    for key in getStateList():
-        data = quandl.get(key, authtoken=apiKey)
-        data.columns = [key]
+    for abrv in getStateList():
+        data = quandl.get("FMAC/HPI_"+abrv, authtoken=apiKey)
+        data.columns = [abrv]
+        
+        if rolling:
+            data[abrv] = (data[abrv] - data[abrv][0]) / data[abrv][0] * 100.0
+            path = 'resources/fiftyStates2.pickle'
+        else:
+            path = 'resources/fiftyStates.pickle'
         
         if mainData.empty:
             mainData = data
         else:
             mainData = mainData.join(data)
-
-    with open('fiftyStates.pickle', 'wb') as file:
+    
+    
+    with open(path, 'wb') as file:
         pickle.dump(mainData, file)
 
-with open('fiftyStates.pickle', 'rb') as file:
-    data = pickle.load(file)
-    data.to_pickle('pandaToPickle.pickle')
-    data2 = pd.read_pickle('pandaToPickle.pickle')
-    print(data, data2)
+def hpiBenchmark():
+    data = quandl.get("FMAC/HPI_USA", authtoken=apiKey)
+    data.columns = ['United States']
+    
+    data['United States'] = (data['United States'] - 
+                             data['United States'][0]) / data['United States'][0] * 100.0
+    return data
 
+#writeInitialStateData(rolling=True)
