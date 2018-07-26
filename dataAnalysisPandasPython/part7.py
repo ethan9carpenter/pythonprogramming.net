@@ -11,7 +11,7 @@ def getStateList():
     
     return abbreviations
         
-def writeInitialStateData(rolling=False):
+def writeInitialStateData(rolling=True):
     mainData = pd.DataFrame()
 
     for abrv in getStateList():
@@ -20,9 +20,7 @@ def writeInitialStateData(rolling=False):
         
         if rolling:
             data[abrv] = (data[abrv] - data[abrv][0]) / data[abrv][0] * 100.0
-            path = 'resources/fiftyStates2.pickle'
-        else:
-            path = 'resources/fiftyStates.pickle'
+        path = 'resources/fiftyStates.pickle'
         
         if mainData.empty:
             mainData = data
@@ -35,10 +33,10 @@ def writeInitialStateData(rolling=False):
 
 def hpiBenchmark():
     data = quandl.get("FMAC/HPI_USA", authtoken=apiKey)
-    data.columns = ['United States']
+    data.columns = ['US_HPI']
     
-    data['United States'] = (data['United States'] - 
-                             data['United States'][0]) / data['United States'][0] * 100.0
+    data['US_HPI'] = (data['US_HPI'] - 
+                             data['US_HPI'][0]) / data['US_HPI'][0] * 100.0
     return data
 
 #writeInitialStateData(rolling=True)
