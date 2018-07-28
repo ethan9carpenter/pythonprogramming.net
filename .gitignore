@@ -1,3 +1,7 @@
+#My files to ignore
+dataAnalysisPandasPython/resources/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
