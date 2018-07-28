@@ -1,5 +1,5 @@
 #My files to ignore
-dataAnalysisPandasPython/resources/
+dataAnalysisPandasPython/tools.py
 
 
 # Byte-compiled / optimized / DLL files
