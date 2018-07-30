@@ -1,7 +1,6 @@
 import pandas as pd
 from matplotlib import style, pyplot
 import quandl
-from tools import apiKey
 from part7 import hpiBenchmark
 
 style.use('fivethirtyeight')

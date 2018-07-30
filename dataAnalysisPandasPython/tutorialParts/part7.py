@@ -1,7 +1,6 @@
 import pandas as pd
 import quandl, pickle
 
-apiKey = 'rcYX2m1mjgcxsyx_skRb'
 
 def getStateList():
     statesHMTL = pd.read_html('resources/states.html')[0][1][1:]
