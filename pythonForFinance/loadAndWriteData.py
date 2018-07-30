@@ -82,3 +82,4 @@ def compileData():
     mainDF.to_csv('resources/mergedSP500.csv')
 
 
+saveSP500()
