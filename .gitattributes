@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+pythonForFinance/resources/* linguist-vendored
+pythonForFinance/results/* linguist-vendored
+pythonForFinance/stockDFS/* linguist-vendored
+dataAnalysisPandasPython/resources/* linguist-vendored
