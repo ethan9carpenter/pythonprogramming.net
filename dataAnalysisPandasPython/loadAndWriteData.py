@@ -3,7 +3,6 @@ import pandas_datareader.data as web
 import pickle
 import json
 import quandl
-from statistics import mean
 
 with open('Users/footballnerd12/API_keys.json') as file:
     apiKey = json.load(file)['quandl']
