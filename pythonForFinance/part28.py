@@ -8,6 +8,7 @@ from trading_calendars.trading_calendar import TradingCalendar
 from datetime import time
 from pandas.tseries.offsets import CustomBusinessDay
 from pytz import timezone
+from trading_calendars.utils.memoize import lazyval
 
 
 def initialize(context):
@@ -44,14 +45,19 @@ panel.minor_axis = ["low","high","open","close","volume"]
 panel.major_axis = panel.major_axis.tz_convert(pytz.utc)
 
 class TwentyFourHR(TradingCalendar):
+    @property
     def name(self):
         return "twentyfourhr"
+    @property
     def tz(self):
         return timezone("UTC")
+    @property
     def open_time(self):
         return time(0, 0)
+    @property
     def close_time(self):
         return time(23, 59)
+    @lazyval
     def day(self):
         return CustomBusinessDay(
             weekmask='Mon Tue Wed Thu Fri Sat Sun',
