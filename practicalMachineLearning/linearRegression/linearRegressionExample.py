@@ -32,7 +32,7 @@ daysOut = int(ceil(.01 * len(df)))
 
 df['label'] = df[predictionCol].shift(-daysOut) #what is being predicted
 
-featureDrops = ['label']
+featureDrops = ['label', 'Adj. Close']
 
 X = np.array(df.drop(featureDrops, 1))
 X = preprocessing.scale(X)#BE CAREFUL WHERE YOU PUT THIS
