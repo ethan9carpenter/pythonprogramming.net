@@ -1,6 +1,6 @@
 #My files to ignore
 dataAnalysisPandasPython/tools.py
-**/apiKeys.json
+*apiKeys
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
