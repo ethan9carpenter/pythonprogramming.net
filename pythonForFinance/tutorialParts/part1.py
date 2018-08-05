@@ -12,13 +12,3 @@ data = pd.read_csv('resources/tsla.csv', parse_dates=True, index_col=0)
 
 data['Close'].plot()
 pyplot.show()
-
-
-
-
-
-
-
-
-
-
