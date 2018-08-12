@@ -6,3 +6,7 @@ notes = {
     algorithm""",
     
     }
+"""
+do not need to split test/train data for unsupervised machine learning, 
+can use entire dataset for everything
+"""
