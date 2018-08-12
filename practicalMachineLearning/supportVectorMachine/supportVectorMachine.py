@@ -13,7 +13,9 @@ class SupportVectorMachine:
             self.ax = self.figure.add_subplot(1, 1, 1)
     
     def setFitSteps(self, optimizationDegree):
+        #precision of w
         stepSizes = [self.featureMax * (10 ** -i) for i in range(1, optimizationDegree+1)]
+        
         #bStep is extremely expensive in runtime, doesn't need to be as precise as w
         bRangeMult, bStep = 5, 5
         
@@ -31,7 +33,7 @@ class SupportVectorMachine:
         lastOptimal = self.featureMax * 10 #w is initially [lastOptimal, lastOptimal]
         
         for wStep in stepSizes:
-            w = np.array([lastOptimal, lastOptimal])
+            w = np.array([lastOptimal, lastOptimal]) #initialize vector to current best option
             optimized = False #allowed because it is a convex optimization
             self.optimize(optimized, bRangeMult, bStep, wStep, optimizationDict, w)
             
@@ -39,6 +41,9 @@ class SupportVectorMachine:
             optimalChoice = optimizationDict[magnitudes[0]]
             self.w, self.b = optimalChoice
             lastOptimal = optimalChoice[0][0] + wStep * 2 #minimum is within last two steps
+        for i in self.data:
+            for j in self.data[i]:
+                print(np.dot(j, self.w) + self.b)
                     
     def optimize(self, optimized, bRangeMult, bStep, wStep, optimizationDict, w):
         vectorTransforms = [[1, 1],
@@ -66,7 +71,7 @@ class SupportVectorMachine:
                 if w[0] < 0:
                     optimized = True
                 else:
-                    w = w - wStep  
+                    w = w - wStep
                      
     def setFeatureExtremes(self):
         allFeatureValues = []
@@ -133,4 +138,4 @@ predcitionSets = [[0, 10],
 
 for p in predcitionSets:
     svm.predict(p)
-svm.visualize()
+#svm.visualize()
