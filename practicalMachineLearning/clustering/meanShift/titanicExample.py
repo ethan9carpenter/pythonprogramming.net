@@ -3,6 +3,7 @@ from sklearn.cluster import MeanShift
 import pandas as pd
 from sklearn import preprocessing
 from clustering.kMeans.titanicExample import handleNonNum
+from collections import Counter
 
 df = pd.read_csv('titanic.csv')
 originalDF = df.copy()
@@ -37,5 +38,6 @@ for i in range(numClusters):
 for i in np.unique(labels):
     print(originalDF[originalDF['clusterGroup'] == i].describe()[['pclass', 'survived']])
 
+print(Counter(labels))
 print(survivalRates)
 
