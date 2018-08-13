@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot, style
+from sklearn.datasets.samples_generator import make_blobs
 style.use('fivethirtyeight')
 
 class MeanShift:
@@ -109,12 +110,16 @@ X = np.array([[1, 2],
               [8, 2], 
               [10, 2],
               [9, 3]])
+X = make_blobs(n_samples=15, centers=3, n_features=2)[0]
+
 clf = MeanShift()
 clf.fit(X)
 centroids = clf.centroids
 
-pyplot.scatter(X[:,0], X[:,1], s=100)
-print(centroids)
+for classif in clf.classifications:
+    color = colors[classif]
+    for feats in clf.classifications[classif]:
+        pyplot.scatter(feats[0], feats[1], c=color, s=100)
 for c in centroids:
     pyplot.scatter(centroids[c][0], centroids[c][1], c='k', s=100, marker='*')
     
