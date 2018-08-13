@@ -100,7 +100,7 @@ class MeanShift:
         return classif
 
 
-colors = 10* ['r', 'b', 'k', 'g', 'c', 'o']
+colors = 10* ['r', 'b', 'k', 'g', 'c']
 X = np.array([[1, 2],
               [1.5, 1.8],
               [5, 8],
@@ -110,7 +110,7 @@ X = np.array([[1, 2],
               [8, 2], 
               [10, 2],
               [9, 3]])
-X = make_blobs(n_samples=15, centers=3, n_features=2)[0]
+X = make_blobs(n_samples=35, centers=4, n_features=2)[0]
 
 clf = MeanShift()
 clf.fit(X)
