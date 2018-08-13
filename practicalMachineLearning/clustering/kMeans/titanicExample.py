@@ -24,6 +24,9 @@ def handleNonNum(df):
             df[column] = list(map(convert, df[column]))
     return df
 
+"""
+
+
 cols = ['pclass', 'survived', 'name', 'sex', 'age', 'sibsp', 'parch', 'ticket',
        'fare', 'cabin', 'embarked', 'boat', 'body', 'home.dest']
 
@@ -68,3 +71,6 @@ for a, b in zip(clf.labels_, df['survived']):
 accuracy = numCorrect / len(X)
 accuracy = max(accuracy, 1-accuracy)
 print(accuracy)
+
+
+"""
