@@ -1,6 +1,5 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
-
 """
 input --> weight --> hidden layer 1 (activation functions) --> ... --> 
 weight --> hidden layer n (activation function) --> weights --> output (feed forward)
@@ -23,7 +22,7 @@ batchSize = 100 #to deal with extremely large datasets
 
 #matrix = height x weight, if we add the parameter TF will throw an 
 #error when it encounters something of a different shape
-X = tf.placeholder('float', [None, 784])
+x = tf.placeholder('float', [None, 784])
 y = tf.placeholder('float')
 
 def networkModel(data):
@@ -37,15 +36,16 @@ def createTFLayers(layers, data):
     tfLayers = []
     
     for i in range(len(layers)):
-        weights, biases = layers[i]
+        weights = layers[i]['weights']
+        biases = layers[i]['biases']
         
         if i == 0:
-            lay = tf.add(tf.matmul(data, weights) + biases)
+            lay = tf.add(tf.matmul(data, weights), biases)
         else:
-            lay = tf.add(tf.matmul(tfLayers[-1], weights) + biases)
+            lay = tf.add(tf.matmul(tfLayers[-1], weights), biases)
         lay = tf.nn.relu(lay)
         tfLayers.append(lay)
-    
+            
     return tfLayers
 
 def createLayers():
@@ -58,14 +58,43 @@ def createLayers():
             
             if i == 0:
                 layer = {'weights': tf.Variable(tf.random_normal([784, nNodes])),
-                         'biases': tf.Variable(tf.random_normal(nNodes))}
+                         'biases': tf.Variable(tf.random_normal([nNodes]))}
             else:
                 prevNodes = numNodes[i-1]
                 layer = {'weights': tf.Variable(tf.random_normal([prevNodes, nNodes])),
-                         'biases': tf.Variable(tf.random_normal(nNodes))}
+                         'biases': tf.Variable(tf.random_normal([nNodes]))}
             layers.append(layer)
     
     outputLayer = {'weights': tf.Variable(tf.random_normal([numNodes[-1], numClasses])),
-                  'biases': tf.Variable(tf.random_normal(numClasses))}
+                  'biases': tf.Variable(tf.random_normal([numClasses]))}
     
     return layers, outputLayer
+
+def train(x):
+    prediction = networkModel(x)
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=prediction, labels=y))
+    optimizer = tf.train.AdamOptimizer().minimize(cost)
+    
+    numEpochs = 5 #feed forward and backward propogation
+    
+    with tf.Session() as session:
+        session.run(tf.global_variables_initializer())
+        
+        for i in range(numEpochs):
+            epochLoss = 0
+            for _ in range(int(mnist.train.num_examples / batchSize)):
+                epochX, epochY = mnist.train.next_batch(batchSize)
+                #print(type(cost), type(epochX), type(epochY))
+                _, c = session.run([optimizer, cost], feed_dict={x: epochX, y: epochY})
+                epochLoss += c
+            print(i, ':', epochLoss)
+            
+        correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+        print('Accuracy:', accuracy.eval({x: mnist.test.images, y: mnist.test.labels}))
+    
+train(x)
+        
+    
+    
+    
