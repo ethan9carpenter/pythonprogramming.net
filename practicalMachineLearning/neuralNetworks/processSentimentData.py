@@ -50,8 +50,8 @@ def handleSample(sample, lexicon, classification):
 def createFeaturesAndLabels(pos, neg, testSize=0.1):
     lexicon = createLexicon(pos, neg)
     features = []
-    features += handleSample('pos.txt', lexicon, [1, 0])
-    features += handleSample('neg.txt', lexicon, [0, 1])
+    features += handleSample('res/pos.txt', lexicon, [1, 0])
+    features += handleSample('res/neg.txt', lexicon, [0, 1])
     random.shuffle(features)
     #Rewatch videos to take notes, crunched for time right now
     features = np.array(features)
@@ -65,8 +65,8 @@ def createFeaturesAndLabels(pos, neg, testSize=0.1):
     return trainX, trainY, testX, testY
 
 if __name__ == '__main__':
-    X, y, testX, testY = createFeaturesAndLabels('pos.txt', 'neg.txt')
-    with open('sentimentData.pickle', 'wb') as file:
+    X, y, testX, testY = createFeaturesAndLabels('res/pos.txt', 'res/neg.txt')
+    with open('res/sentimentData.pickle', 'wb') as file:
         pickle.dump([X, y, testX, testY], file)
 
             
