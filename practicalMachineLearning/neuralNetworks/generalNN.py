@@ -1,36 +1,9 @@
 import tensorflow as tf
-from processSentimentData import createFeaturesAndLabels
 import numpy as np
 
-"""
-input --> weight --> hidden layer 1 (activation functions) --> ... --> 
-weight --> hidden layer n (activation function) --> weights --> output (feed forward)
-
-compare to intended output with a cost function
-
-optimizer will try to minimize cost (backpropogation), going backwards from the
-output and manipulates weights in order to minimize cost
-
-feed forward + backpropogation = epoch (will repeat many times)
-"""
-
-#one_hot=True means that each feature set can only be one classification
-xTrain, yTrain, xTest, yTest = createFeaturesAndLabels(pos='res/pos.txt', neg='res/neg.txt')
-
-numNodes = [10] * 10
-
-featuresLength = len(xTrain[0])
-numClasses = 2
-batchSize = 100 #to deal with extremely large datasets
-
-#matrix = height x weight, if we add the parameter TF will throw an 
-#error when it encounters something of a different shape
-x = tf.placeholder('float', [None, featuresLength])
-y = tf.placeholder('float')
-
-def networkModel(data):
-    layers, outputLayer = createLayers()
-    tfLayers = createTFLayers(layers, data)
+def networkModel(X, numNodes):
+    layers, outputLayer = createLayers(numNodes, len(X[0]))
+    tfLayers = createTFLayers(layers, X)
     output = tf.matmul(tfLayers[-1], outputLayer['weights']) + outputLayer['biases']
     
     return output
@@ -51,7 +24,7 @@ def createTFLayers(layers, data):
             
     return tfLayers
 
-def createLayers():
+def createLayers(numNodes, featLength):
     layers = []
     
     for i in range(len(numNodes)):
@@ -60,7 +33,7 @@ def createLayers():
             nNodes = numNodes[i]
             
             if i == 0:
-                layer = {'weights': tf.Variable(tf.random_normal([featuresLength, nNodes])),
+                layer = {'weights': tf.Variable(tf.random_normal([featLength, nNodes])),
                          'biases': tf.Variable(tf.random_normal([nNodes]))}
             else:
                 prevNodes = numNodes[i-1]
@@ -73,8 +46,12 @@ def createLayers():
     
     return layers, outputLayer
 
-def train(x, numEpochs=3):
-    prediction = networkModel(x)
+def train(X, numEpochs=3, numLayers=3, numNodes=500):
+    x = tf.placeholder('float', [None, len(X[0])])
+    y = tf.placeholder('float')
+    
+    numNodes = [numNodes] * numLayers
+    prediction = networkModel(X)
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=prediction, labels=y))
     optimizer = tf.train.AdamOptimizer().minimize(cost)
     
@@ -97,8 +74,12 @@ def train(x, numEpochs=3):
         correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
         accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
         print('Accuracy:', accuracy.eval({x: xTest, y: yTest}))
-    
-train(x, 10)
+
+xTrain, yTrain, xTest, yTest = []
+numClasses = 2
+batchSize = 100 #to deal with extremely large datasets
+
+train(xTrain)
         
     
     
