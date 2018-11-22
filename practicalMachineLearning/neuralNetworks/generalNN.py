@@ -1,9 +1,11 @@
 import tensorflow as tf
-import numpy as np
+from tensorflow.examples.tutorials.mnist import input_data
 
-def networkModel(X, numNodes):
-    layers, outputLayer = createLayers(numNodes, len(X[0]))
-    tfLayers = createTFLayers(layers, X)
+
+
+def networkModel(data, numNodes, numClasses):
+    layers, outputLayer = createLayers(numNodes, numClasses)
+    tfLayers = createTFLayers(layers, data)
     output = tf.matmul(tfLayers[-1], outputLayer['weights']) + outputLayer['biases']
     
     return output
@@ -24,7 +26,7 @@ def createTFLayers(layers, data):
             
     return tfLayers
 
-def createLayers(numNodes, featLength):
+def createLayers(numNodes, numClasses):
     layers = []
     
     for i in range(len(numNodes)):
@@ -33,7 +35,7 @@ def createLayers(numNodes, featLength):
             nNodes = numNodes[i]
             
             if i == 0:
-                layer = {'weights': tf.Variable(tf.random_normal([featLength, nNodes])),
+                layer = {'weights': tf.Variable(tf.random_normal([784, nNodes])),
                          'biases': tf.Variable(tf.random_normal([nNodes]))}
             else:
                 prevNodes = numNodes[i-1]
@@ -46,40 +48,39 @@ def createLayers(numNodes, featLength):
     
     return layers, outputLayer
 
-def train(X, numEpochs=3, numLayers=3, numNodes=500):
-    x = tf.placeholder('float', [None, len(X[0])])
-    y = tf.placeholder('float')
+def train(data, x, y, numClasses, numNodes=500, numLayers=3, batchSize=100, numExamples=None):
+    if not numExamples:
+        numExamples = len(data)
     
-    numNodes = [numNodes] * numLayers
-    prediction = networkModel(X)
+    numNodes = 3 * [500]
+    prediction = networkModel(x, numNodes, numClasses)
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=prediction, labels=y))
     optimizer = tf.train.AdamOptimizer().minimize(cost)
     
+    numEpochs = 5 #feed forward and backward propogation
+        
     with tf.Session() as session:
         session.run(tf.global_variables_initializer())
         
-        for epNum in range(numEpochs):
+        for i in range(numEpochs):
             epochLoss = 0
-            
-            for i in range(len(xTrain)):
-                start = i
-                end = i + batchSize
-                epochX = np.array(xTrain[start:end])
-                epochY = np.array(yTrain[start:end])
-                
+            for _ in range(int(numExamples / batchSize)):
+                epochX, epochY = data.next_batch(batchSize)
                 _, c = session.run([optimizer, cost], feed_dict={x: epochX, y: epochY})
                 epochLoss += c
-            print(epNum+':', epochLoss)
+            print(i, ':', epochLoss)
             
         correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
         accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
-        print('Accuracy:', accuracy.eval({x: xTest, y: yTest}))
+        print('Accuracy:', accuracy.eval({x: mnist.test.images, y: mnist.test.labels}))
 
-xTrain, yTrain, xTest, yTest = []
-numClasses = 2
-batchSize = 100 #to deal with extremely large datasets
+mnist = input_data.read_data_sets('/tmp/data/', one_hot=True)
+mnist = mnist.train
 
-train(xTrain)
+x = tf.placeholder('float', [None, 784])
+y = tf.placeholder('float')
+
+train(mnist, x, y, 10, numExamples=mnist.num_examples)
         
     
     

@@ -17,11 +17,12 @@ feed forward + backpropogation = epoch (will repeat many times)
 #one_hot=True means that each feature set can only be one classification
 xTrain, yTrain, xTest, yTest = createFeaturesAndLabels(pos='res/pos.txt', neg='res/neg.txt')
 
-numNodes = [10] * 10
+numLayers = 3
+numNodes = [100] * numLayers
 
 featuresLength = len(xTrain[0])
 numClasses = 2
-batchSize = 100 #to deal with extremely large datasets
+batchSize = 1000 #to deal with extremely large datasets
 
 #matrix = height x weight, if we add the parameter TF will throw an 
 #error when it encounters something of a different shape
@@ -84,7 +85,8 @@ def train(x, numEpochs=3):
         for epNum in range(numEpochs):
             epochLoss = 0
             
-            for i in range(len(xTrain)):
+            i = 0
+            while i < len(xTrain):
                 start = i
                 end = i + batchSize
                 epochX = np.array(xTrain[start:end])
@@ -92,13 +94,14 @@ def train(x, numEpochs=3):
                 
                 _, c = session.run([optimizer, cost], feed_dict={x: epochX, y: epochY})
                 epochLoss += c
-            print(epNum+':', epochLoss)
+                i += batchSize
+            print(str(epNum+1)+':', epochLoss)
             
         correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
         accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
         print('Accuracy:', accuracy.eval({x: xTest, y: yTest}))
     
-train(x, 10)
+train(x, 15)
         
     
     
