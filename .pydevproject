@@ -6,5 +6,6 @@
 <path>/${PROJECT_DIR_NAME}/dataAnalysisPandasPython</path>
 <path>/${PROJECT_DIR_NAME}/pythonForFinance</path>
 <path>/${PROJECT_DIR_NAME}/practicalMachineLearning</path>
+<path>/${PROJECT_DIR_NAME}/dash</path>
 </pydev_pathproperty>
 </pydev_project>
